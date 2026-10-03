@@ -318,7 +318,7 @@ def execute_check_in(client, account_name: str, provider_config, headers: dict):
 def format_check_in_notification(detail: dict) -> str:
 	"""格式化签到通知消息"""
 	provider = detail.get('provider', 'unknown')
-	return '\n'.join(['✅ 签到成功', f'🏷️ 供应商：{provider}', f'👤 账号：{detail["name"]}'])
+	return '\n'.join(['✅ 签到成功', f'🏷️ 供应商：{provider}'])
 
 
 async def check_in_account(account: AccountConfig, account_index: int, app_config: AppConfig):
