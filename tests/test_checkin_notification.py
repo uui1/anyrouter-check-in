@@ -7,14 +7,14 @@ sys.path.insert(0, str(project_root))
 from checkin import format_check_in_notification
 
 
-def test_format_check_in_notification_returns_simplified_chinese_message():
+def test_format_check_in_notification_returns_full_chinese_message():
 	detail = {'name': 'Account 1', 'provider': 'anyrouter'}
 
 	message = format_check_in_notification(detail)
 
+	assert '成功账号：Account 1' in message
 	assert '✅ 签到成功' in message
 	assert '🏷️ 供应商：anyrouter' in message
-	assert '👤 账号：' not in message
 
 
 def test_format_check_in_notification_defaults_provider_when_missing():
@@ -22,4 +22,13 @@ def test_format_check_in_notification_defaults_provider_when_missing():
 
 	message = format_check_in_notification(detail)
 
+	assert '成功账号：Account 2' in message
 	assert '🏷️ 供应商：unknown' in message
+
+
+def test_format_check_in_notification_defaults_account_when_missing():
+	detail = {'provider': 'anyrouter'}
+
+	message = format_check_in_notification(detail)
+
+	assert '成功账号：unknown' in message
