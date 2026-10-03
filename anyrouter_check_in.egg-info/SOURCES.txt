@@ -1,0 +1,13 @@
+LICENSE
+README.md
+pyproject.toml
+anyrouter_check_in.egg-info/PKG-INFO
+anyrouter_check_in.egg-info/SOURCES.txt
+anyrouter_check_in.egg-info/dependency_links.txt
+anyrouter_check_in.egg-info/requires.txt
+anyrouter_check_in.egg-info/top_level.txt
+tests/test_browser_settings.py
+tests/test_checkin_notification.py
+tests/test_checkin_state.py
+tests/test_notify.py
+tests/test_provider_config.py
