@@ -14,6 +14,7 @@ def test_format_check_in_notification_returns_simplified_chinese_message():
 
 	assert '✅ 签到成功' in message
 	assert '🏷️ 供应商：anyrouter' in message
+	assert '👤 账号：' not in message
 
 
 def test_format_check_in_notification_defaults_provider_when_missing():
