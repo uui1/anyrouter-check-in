@@ -318,7 +318,19 @@ def execute_check_in(client, account_name: str, provider_config, headers: dict):
 def format_check_in_notification(detail: dict) -> str:
 	"""格式化签到通知消息"""
 	provider = detail.get('provider', 'unknown')
-	return '\n'.join(['✅ 签到成功', f'🏷️ 供应商：{provider}'])
+	account_name = detail.get('name', 'unknown')
+	after_quota = float(detail.get('after_quota', 0))
+	check_in_reward = float(detail.get('check_in_reward', 0))
+	reward_prefix = '+' if check_in_reward > 0 else ''
+	return '\n'.join(
+		[
+			'✅ 签到成功',
+			f'🏷️ 供应商：{provider}',
+			f'👤 账号：{account_name}',
+			f'💰 余额：${after_quota:.2f}',
+			f'🎁 签到增加：{reward_prefix}${check_in_reward:.2f}',
+		]
+	)
 
 
 async def check_in_account(account: AccountConfig, account_index: int, app_config: AppConfig):
@@ -469,7 +481,7 @@ async def main():
 	if not accounts:
 		error_msg = '[FAILED] Unable to load account configuration, program exits'
 		print(error_msg)
-		notify.push_message('AnyRouter Check-in Alert', error_msg, msg_type='text')
+		notify.push_message('AnyRouter 签到通知', error_msg, msg_type='text')
 		sys.exit(1)
 
 	print(f'[INFO] Found {len(accounts)} account configurations')
@@ -574,19 +586,19 @@ async def main():
 
 	if need_notify and notification_content:
 		summary = [
-			'[STATS] Check-in result statistics:',
-			f'[SUCCESS] Success: {success_count}/{total_count}',
-			f'[FAIL] Failed: {total_count - success_count}/{total_count}',
+			'📊 签到统计',
+			f'✅ 成功：{success_count}/{total_count}',
+			f'❌ 失败：{total_count - success_count}/{total_count}',
 		]
 
 		if success_count == total_count:
-			summary.append('[SUCCESS] All accounts check-in successful!')
+			summary.append('🎉 全部账号签到成功')
 		elif success_count > 0:
-			summary.append('[WARN] Some accounts check-in successful')
+			summary.append('⚠️ 部分账号签到成功')
 		else:
-			summary.append('[ERROR] All accounts check-in failed')
+			summary.append('🚨 全部账号签到失败')
 
-		time_info = f'[TIME] Execution time: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
+		time_info = f'🕒 执行时间：{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
 
 		notify_content = '\n\n'.join([time_info, '\n'.join(notification_content), '\n'.join(summary)])
 		screenshot_paths = take_pending_screenshots() if is_debug_enabled() else []
@@ -602,7 +614,7 @@ async def main():
 			notify_content += f'\n\n{screenshot_hint}'
 
 		print(notify_content)
-		notify.push_message('AnyRouter Check-in Alert', notify_content, msg_type='text')
+		notify.push_message('AnyRouter 签到通知', notify_content, msg_type='text')
 		print('[NOTIFY] Notification sent due to failures or balance changes')
 	else:
 		print('[INFO] All accounts successful and no balance changes detected, notification skipped')
